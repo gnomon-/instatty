@@ -1,0 +1,49 @@
+#!/bin/bash
+
+declare -a instapics opts_curl
+declare    sedprog jqprog_comment instapic
+
+opts_curl=( \
+  '-s'
+  '-L'
+)
+
+sedprog='s/.*window\._sharedData = \(.*\)<\/script>.*/\1/p'
+
+read -r -d '' jqprog_comment<<-_END_OF_JQ_
+	.entry_data.PostPage[].graphql.shortcode_media | 
+	  ((.taken_at_timestamp | tostring)       + "\t" +
+	  "https://instagram.com/p/" + .shortcode + "\t" +
+	  .owner.id                               + "\t" +
+	  .owner.username +
+	  "\n\n" +
+	  .edge_media_to_caption.edges[].node.text +
+	  "\n----"),
+
+	("LIKES (" + (.edge_media_preview_like.count|tostring) + ")\n",
+
+	(.edge_media_preview_like.edges[] |
+	  ((.node.id | tostring) + "\t" +
+	  .node.username)) +
+	  " "),
+
+	"----",
+
+	(.edge_media_to_comment.edges[].node |
+	  ((.created_at | tostring) + "\t" +
+	  .owner.id                 + "\t" +
+	  .owner.username +
+	  "\n" +
+	  .text +
+	  "\n----"))
+_END_OF_JQ_
+jqprog_comment="${jqprog_comment//$'\n'/\ }"
+
+instapics=("$@")
+
+for instapic in "${instapics[@]}" ; do
+	curl "${opts_curl[@]}" "$instapic" | \
+	  sed -ne "$sedprog" | \
+	  jq -r "$jqprog_comment" 2> /dev/null
+done
+

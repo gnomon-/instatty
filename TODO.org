@@ -1,0 +1,55 @@
+instatty TODO    -*- mode: org; mode: visual-line; -*-
+
+#+TODO: TODO(t!) WAIT(w@/!) | DONE(d@/!) CANCELED(c@/!)
+#+STARTUP: align
+
+I'll be using this [[https://orgmode.org][org-mode file]] as a super lightweight bug tracker, at least for now.  We'll see how that pans out.
+
+* TODO hoist per-user settings out of the program and into a config file :feature:basics:
+  - State "TODO"       from ""           [2018-03-21 Wed 14:53]
+
+* TODO add option parsing				     :feature:basics:
+  - State "TODO"       from ""           [2018-03-21 Wed 14:53]
+
+** TODO verbosity tuning
+   - State "TODO"       from ""           [2018-03-21 Wed 14:54]
+
+** TODO retain temporary files after program exit
+   - State "TODO"       from ""           [2018-03-21 Wed 14:54]
+
+* TODO rearchitect to include a mode to pull updates into a local cache from a =cron= job :feature:
+  - State "TODO"       from ""           [2018-03-21 Wed 14:55]
+
+** TODO polling of user timelines
+   - State "TODO"       from ""           [2018-03-21 Wed 14:56]
+
+** TODO polling of comments for particular posts
+   - State "TODO"       from ""           [2018-03-21 Wed 14:56]
+
+* TODO add error handling				     :feature:basics:
+  - State "TODO"       from ""           [2018-03-21 Wed 14:57]
+
+** TODO startup errors (missing prerequisite programs, etc.)
+   - State "TODO"       from ""           [2018-03-21 Wed 14:57]
+
+** TODO configuration / option errors
+   - State "TODO"       from ""           [2018-03-21 Wed 14:57]
+
+** TODO network errors
+   - State "TODO"       from ""           [2018-03-21 Wed 14:57]
+
+** TODO temp file errors
+   - State "TODO"       from ""           [2018-03-21 Wed 14:58]
+
+* TODO add documentation					    :feature:
+  - State "TODO"       from ""           [2018-03-21 Wed 14:58]
+
+** TODO basic =-h= / =--help= interactive documentation		     :basics:
+   - State "TODO"       from ""           [2018-03-21 Wed 14:59]
+
+** TODO manpage?
+   - State "TODO"       from ""           [2018-03-21 Wed 14:59]
+* TODO merge =instatty-comments= into =instatty=
+  - State "TODO"       from ""           [2018-03-21 Wed 15:19]
+* TODO choose a license						     :basics:
+  - State "TODO"       from ""           [2018-03-21 Wed 15:20]

@@ -1,0 +1,70 @@
+#!/bin/bash
+
+declare -a instagram_users opts_curl
+declare    tmpdir user sedprog jqprog_{timeline,comments}
+
+instagram_users=( \
+  adriana_boulders        annapachenka         barbralica
+  blondiebarr             bpmgirl              bustedsneakers
+  charliequinnto          corrina_lightchaser  cospartyto
+  curbsidecycle           daisy_drea           daniel.oyama
+  emmanadecrafts          evjbalfour           flairespressomaker
+  gentlyrolling           gingerhat            gnomon027
+  hotpinkgeek             ivanvector           jdzanin
+  k8eb                    kaoconnor            kelly_boaz
+  kinugrinders            linbot_              lizrosemorriss
+  megnatphil              misstammydarling     mpoole33
+  necrobuffalo            olivershallum        redorangeandpale
+  rohloff_en              sampipes88           sandbox.empire
+  sarite_h                scottwchris          singularsensationmondays
+  sporkinator             srsloaf              taylorswift
+  tessusb                 thecanoli            therealbitchsalad
+  vintagebreener          vostok.bike          www_ora_tion_ca
+  yamamoto_takahiro60219  zandernerd_
+)
+
+opts_curl=( \
+  '-s'
+  '-L'
+)
+
+read -r -d '' jqprog_timeline<<-_END_OF_JQ_
+	.entry_data.ProfilePage[].graphql.user.edge_owner_to_timeline_media.edges[].node | 
+	(
+	  (.taken_at_timestamp | tostring)           + "\t" +
+	   "https://instagram.com/p/" + .shortcode   + "\t" +
+	   (.edge_liked_by.count | tostring)         + "\t" +
+	   (.edge_media_to_comment.count | tostring) + "\t" +
+	   \$USER + "\t" +
+	   .edge_media_to_caption.edges[].node.text
+	)
+_END_OF_JQ_
+jqprog_timeline="${jqprog_timeline//$'\n'/\ }"
+
+sedprog='s/.*window\._sharedData = \(.*\)<\/script>.*/\1/p'
+
+tmpdir=$(mktemp -d) || exit 1
+
+function cleanup {
+	declare -a opts_rm=()
+	((verbosity > 0)) && opts_rm+=('-v')
+	opts_rm+=('-r' '--')
+	rm "${opts_rm[@]}" "$tmpdir"
+}
+
+trap cleanup EXIT
+
+for user in "${instagram_users[@]}" ; do
+	curl "${opts_curl[@]}" \
+	  -D "${tmpdir}/${user}.headers" \
+	  -o "${tmpdir}/${user}" \
+	  'https://instagram.com/'"$user" &
+done
+
+wait
+
+for user in "${instagram_users[@]}" ; do
+	sed -ne "$sedprog" "${tmpdir}/${user}" | \
+	  jq --arg USER "$user" -r "$jqprog_timeline"
+done | sort -snk 1,1
+
